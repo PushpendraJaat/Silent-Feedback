@@ -10,8 +10,8 @@ export async function middleware(request: NextRequest) {
 
     if (token &&
         (
-            url.pathname.startsWith('/sign-in') ||
-            url.pathname.startsWith('/sign-up') ||
+            url.pathname.startsWith('/signin') ||
+            url.pathname.startsWith('/signup') ||
             url.pathname.startsWith('/') ||
             url.pathname.startsWith('verify-email')
         )
@@ -24,10 +24,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        '/sign-in',
-        '/sign-up',
+        '/signin',
+        '/signup',
         '/',
-        'verify-email/:path*', ,
-        'dashboard/:path*',
+        '/verify-email/:path*',
+        '/dashboard/:path*', // Matches any path after /dashboard
     ]
 }

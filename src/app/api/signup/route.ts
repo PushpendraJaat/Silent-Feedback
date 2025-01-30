@@ -6,6 +6,8 @@ import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 
 
 export async function POST(request: Request) {
+    console.log("connectingdb");
+    
     await dbConnect()
 
     try {
