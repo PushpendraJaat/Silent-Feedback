@@ -11,38 +11,38 @@ export async function GET(request: Request) {
     await dbConnect();
 
     try {
-        const {searchParams} = new URL(request.url);
-        const queryParam = {username: searchParams.get("username")}
+        const { searchParams } = new URL(request.url);
+        const queryParam = { username: searchParams.get("username") }
         const validUserName = UsernameQuerySchema.safeParse(queryParam);
         //zod vallidation
-        if(!validUserName.success){
+        if (!validUserName.success) {
             const usernameErrors = validUserName.error.format().username?._errors || []
             return Response.json({
                 success: false,
                 message: usernameErrors?.length > 0 ? usernameErrors.join(",") : "Invalid query parameters"
             },
-        {
-            status: 400
-        })
+                {
+                    status: 400
+                })
         }
 
         const username = validUserName.data.username
 
-        const userResponse = await UserModel.findOne({username, isVerified:true})
-       if (userResponse) {
-         return Response.json({
-             success: false,
-             message: "Username already exists"
-         },{
-             status: 400
-         })
-       }
-       return Response.json({
-        success: true,
-        message: "Username is available"
-    },{
-        status: 200
-    })
+        const userResponse = await UserModel.findOne({ username, isVerified: true })
+        if (userResponse) {
+            return Response.json({
+                success: false,
+                message: "Username already exists"
+            }, {
+                status: 400
+            })
+        }
+        return Response.json({
+            success: true,
+            message: "Username is available"
+        }, {
+            status: 200
+        })
 
     } catch (error) {
         console.error("Error checking available username", error);
