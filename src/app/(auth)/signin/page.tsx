@@ -4,11 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import Link from "next/link"
-import axios, { AxiosError } from "axios"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { signUpSchema } from "@/schemas/signUpSchema"
-import { ApiResponse } from "@/types/ApiResponse"
+import { signInSchema } from "@/schemas/signInSchema"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import {
@@ -21,6 +19,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { signIn, SignInResponse } from "next-auth/react"
 
 const Page = () => {
 
@@ -28,30 +27,39 @@ const Page = () => {
   const router = useRouter()
 
   //zod
-  const form = useForm<z.infer<typeof signUpSchema>>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
-      username: '',
-      email: '',
+      identifier: '',
       password: ''
     }
   })
 
 
-  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
+  const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     setIsSubmitting(true)
     try {
-      const response = await axios.post<ApiResponse>('/api/auth/', data)
-      toast("Success", {
-        description: response.data.message
+      const result: SignInResponse | undefined = await signIn('credentials', {
+        redirect: false,
+        email: data.identifier,
+        password: data.password
       })
-      router.replace(`/dashboard/`)
+      console.log(result)
+      if (result?.error) {
+        toast("Login failed", {
+          description: "Invalid credentials!"
+        })
+      } 
+
+      if(result?.url){
+        router.replace('/dashboard')
+      }
+
     } catch (error) {
       console.error("Error in signin of user", error)
-      const axiosError = error as AxiosError<ApiResponse>;
-      const errorMessage = axiosError.response?.data.message;
-      toast("Sign In failed", {
-        description: errorMessage
+
+      toast("Sign In failed!", {
+        description: String(error)
       })
     }
     finally {
@@ -74,12 +82,14 @@ const Page = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="username"
+                name="identifier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username or Email</FormLabel>
+                    <FormLabel>
+                      Email or Username
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="username"
+                      <Input placeholder="identifier"
                         {...field} />
 
                     </FormControl>

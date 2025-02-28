@@ -46,7 +46,7 @@ const VerifyAccount = () => {
         description: response.data.message
       })
 
-      router.replace('signin')
+      router.push('/signin')
 
     } catch (error) {
       console.error("Error in verify user code", error)
