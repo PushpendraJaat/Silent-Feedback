@@ -15,6 +15,7 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const parsedData = VerifyQuerySchema.safeParse(body);
+        console.log(parsedData)
 
         if (!parsedData.success) {
             const errorMessages = parsedData.error.flatten().fieldErrors;
