@@ -10,7 +10,7 @@ export async function GET() {
     const user = session?.user;
 
     if (!session || !user) {
-        return new Response("Unauthorized", { status: 401 });
+        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = new mongoose.Types.ObjectId(user._id);
@@ -38,16 +38,16 @@ export async function GET() {
                 }
             }
         ])
-        
-        if(!user || user.length === 0) {
-            return new Response("User not found", { status: 404 });
+
+        if (!user || user.length === 0) {
+            return Response.json({ success: false, message: "User not found" }, { status: 404 });
         }
 
-        return new Response(JSON.stringify(user[0].messages), { status: 200 });
+        return Response.json({ success: true, message: "message fetched", messages: user[0].messages }, { status: 200 });
 
     } catch (error) {
         console.log("failed to get user messages", error);
-        return new Response("Internal Server Error, failed to get user messages", { status: 500 });
+        return Response.json({ success: false, message: "failed to get user messages" }, { status: 501 });
     }
 
 }

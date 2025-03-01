@@ -10,21 +10,21 @@ export async function POST(request: Request) {
         const user = await UserModel.findOne({username});
 
         if(!user) {
-            return new Response("User not found", { status: 404 });
+            return Response.json({success: false, message: "User not found"}, { status: 404 });
         }
 
         if(!user.isAcceptingMessage) {
-            return new Response("User is not accepting messages", { status: 400 });
+            return Response.json({success: false, message: "User is not accepting messages"}, { status: 403 });
         }
 
         const newMessage = {content, createdAt: new Date()};
         user.messages.push(newMessage as Message);
         await user.save();
 
-        return new Response("Message sent successfully", { status: 200 }); 
+        return Response.json({success: true, message: "Message sent successfully"}, { status: 200 });
 
     } catch (error) {
         console.log("failed to send message", error);
-        return new Response("Internal Server Error, failed to send message", { status: 500 });
+        return Response.json({success: false, message: "failed to send message"}, { status: 501 });
     }
 }

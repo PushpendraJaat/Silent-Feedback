@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const user = session?.user;
 
     if (!session || !user) {
-        return new Response("Unauthorized", { status: 401 });
+        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = user._id;
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
             }
         )
         if (!updatedUser) {
-            return new Response("Failed to update user status to accept messages", { status: 401 });
+            return Response.json({ success: false, message: "User not found" }, { status: 404 });
         }
         return Response.json(
             {
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.log("failed to update user status to accept messages", error);
-        return new Response("Internal Server Error", { status: 500 });
+        return Response.json({ success: false, message: "failed to update user status to accept messages" }, { status: 500 });
     }
 }
 
@@ -50,7 +50,7 @@ export async function GET() {
     const user = session?.user;
 
     if (!session || !user) {
-        return new Response("Unauthorized", { status: 401 });
+        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = user._id;
@@ -58,7 +58,7 @@ export async function GET() {
     try {
         const foundUser = await UserModel.findById(userId)
         if(!foundUser) {
-            return new Response("User not found", { status: 404 });
+            return Response.json({ success: false, message: "User not found" }, { status: 404 });
         }
         return Response.json({
             success: true,
@@ -66,6 +66,6 @@ export async function GET() {
         })
     } catch (error) {
         console.log("failed to get user status to accept messages", error);
-        return new Response("failed to get user status to accept messages", { status: 500 });
+        return Response.json({ success: false, message: "failed to get user status to accept messages" }, { status: 500 });
     }
 }
