@@ -15,13 +15,14 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Loader2, RefreshCcw } from "lucide-react"
 import MessageCard from "@/components/MessageCard"
+import { useRouter } from "next/router"
 
 const Dashboard = () => {
-
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isSwitchLoading, setIsSwitchLoading] = useState<boolean>(false)
-  const { data: session } = useSession()
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId))
   }
@@ -91,6 +92,17 @@ const Dashboard = () => {
         description: axiosError.response?.data.message,
       })
     }
+  }
+
+   // Show a loading state if the session is being fetched
+   if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  // If the user is not authenticated, redirect or show an error
+  if (!session || !session.user) {
+    router.push("/signin");
+    return <div>Redirecting...</div>;
   }
 
   const { username } = session?.user as User

@@ -89,7 +89,7 @@ const Page = () => {
                       Email or Username
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="identifier"
+                      <Input placeholder="Enter your email or username"
                         {...field} />
 
                     </FormControl>
@@ -105,7 +105,7 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="password"
+                      <Input type="password" placeholder="Enter your password"
                         {...field} />
                     </FormControl>
                     <FormMessage />

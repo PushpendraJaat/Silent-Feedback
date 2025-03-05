@@ -2,6 +2,7 @@
 
 import {
     Card,
+    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -42,26 +43,30 @@ const MessageCard = ({ message, onMessageDelete }
     }
     return (
         <Card>
-            <CardHeader>
+            <CardHeader className="flex justify-between items-center">
+            <div>
                 <CardTitle>{message.content}</CardTitle>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="destructive"><X className="w-5 h-5" /></Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete this message.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <CardDescription>{new Date(message.createdAt).toLocaleString()}</CardDescription>
+            </div>
+            <AlertDialog>
+                <AlertDialogTrigger asChild></AlertDialogTrigger>
+                <Button variant="destructive" size="icon" className="ml-2">
+                    <X className="w-5 h-5" />
+                </Button>
                 
+                <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete this message.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             </CardHeader>
         </Card>
 

@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
 
     await dbConnect();
     const session = await getServerSession(authOptions)
@@ -53,10 +53,13 @@ export async function GET() {
         return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = user._id;
+    const url = new URL(request.url);
+    const username = url.searchParams.get('username');
 
+    console.log("username", username);
     try {
-        const foundUser = await UserModel.findById(userId)
+        const foundUser = await UserModel.findOne({username})
+        console.log("foundUser", foundUser);
         if(!foundUser) {
             return Response.json({ success: false, message: "User not found" }, { status: 404 });
         }
