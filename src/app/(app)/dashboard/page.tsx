@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Loader2, RefreshCcw } from "lucide-react"
 import MessageCard from "@/components/MessageCard"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
@@ -83,7 +83,7 @@ const Dashboard = () => {
       })
       setValue('acceptMessages', !accectMessages)
       toast(response.data.message, {
-        description: 'User status updated successfully'
+        description: 'User status to accept messages updated successfully'
       })
 
     } catch (error) {

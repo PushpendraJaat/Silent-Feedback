@@ -46,20 +46,20 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
 
     await dbConnect();
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
     const user = session?.user;
-
+  
     if (!session || !user) {
-        return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
-
+  
     const url = new URL(request.url);
-    const username = url.searchParams.get('username');
-
-    console.log("username", username);
+    // If username is provided in URL, use it; otherwise, fallback to session user
+    const usernameFromUrl = url.searchParams.get("username");
+    const usernameToSearch = usernameFromUrl || user.username;
+    
     try {
-        const foundUser = await UserModel.findOne({username})
-        console.log("foundUser", foundUser);
+        const foundUser = await UserModel.findOne({username: usernameToSearch})
         if(!foundUser) {
             return Response.json({ success: false, message: "User not found" }, { status: 404 });
         }

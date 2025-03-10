@@ -50,7 +50,7 @@ const Page = () => {
   useEffect(() => {
     const fetchUserStatus = async () => {
       try {
-        const response = await axios.get<ApiResponse>('/api/user-status', {
+        const response = await axios.get<ApiResponse>('/api/accept-messages', {
           params: { username },
         });
         if (response.data?.success) {
@@ -65,7 +65,7 @@ const Page = () => {
     };
 
     fetchUserStatus();
-  }, [username]);
+  });
 
   const onSubmit = async (data: FormData) => {
     // Check if the user is accepting messages
@@ -89,7 +89,7 @@ const Page = () => {
       }
     } catch (error) {
       console.error(error);
-      toast("Error sending message", { description: "error" });
+      toast("Error sending message", { description: "User is not accepting messages" });
     } finally {
       setIsSubmitting(false);
     }
