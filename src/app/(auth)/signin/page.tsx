@@ -41,7 +41,7 @@ const Page = () => {
     try {
       const result: SignInResponse | undefined = await signIn('credentials', {
         redirect: false,
-        email: data.identifier,
+        identifier: data.identifier,
         password: data.password
       })
       console.log(result)

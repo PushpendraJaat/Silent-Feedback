@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User";
+import { User } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,21 +11,20 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
+        identifier: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials): Promise<any> {
+      async authorize(credentials): Promise<User | null> { // Use your extended User type
         await dbConnect();
 
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.identifier || !credentials?.password) {
           throw new Error("Missing email or password");
         }
 
-        // Find user by email or username
         const user = await UserModel.findOne({
           $or: [
-            { email: credentials.email },
-            { username: credentials.email }
+            { email: credentials.identifier },
+            { username: credentials.identifier }
           ]
         }).lean();
 
@@ -32,28 +32,31 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found");
         }
 
-        // Convert MongoDB ObjectId to string
-        const userWithId = {
-          ...user,
-          _id: user._id.toString()
+        // Map database user to NextAuth User type
+        const userForNextAuth = {
+          id: user._id.toString(), // Map to expected 'id' field
+          email: user.email,
+          name: user.username,
+          isVerified: user.isVerified,
+          isAcceptingMessage: user.isAcceptingMessage,
+          username: user.username,
+          _id: user._id.toString() // Keep _id for your custom properties
         };
 
-        // Check verification status
-        if (!userWithId.isVerified) {
+        if (!userForNextAuth.isVerified) {
           throw new Error("Account not verified");
         }
 
-        // Validate password
         const isValidPassword = await bcrypt.compare(
           credentials.password,
-          userWithId.password
+          user.password
         );
 
         if (!isValidPassword) {
           throw new Error("Incorrect password");
         }
 
-        return userWithId;
+        return userForNextAuth;
       }
     })
   ],
@@ -67,6 +70,8 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        // Map both id and _id for backward compatibility
+        token.id = user.id;
         token._id = user._id;
         token.isVerified = user.isVerified;
         token.isAcceptingMessage = user.isAcceptingMessage;
@@ -80,6 +85,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           _id: token._id,
+          id: token.id,
           isVerified: token.isVerified,
           isAcceptingMessage: token.isAcceptingMessage,
           username: token.username
