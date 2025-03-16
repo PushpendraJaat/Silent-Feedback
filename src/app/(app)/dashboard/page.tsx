@@ -38,7 +38,7 @@ const Dashboard = () => {
       setValue('acceptMessages', response.data.isAcceptingMessages ?? false)
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>
-      toast('Failed to fetch accept messages', {
+      toast('Failed to fetch Is User accepting messages', {
         description: axiosError.response?.data.message,
       })
     }

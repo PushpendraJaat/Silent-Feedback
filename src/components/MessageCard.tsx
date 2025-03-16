@@ -35,40 +35,57 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
       const response = await axios.delete<ApiResponse>("/api/delete-message/", {
         params: { messageId: message._id },
       });
-      toast(response.data.message);
+      toast.success(response.data.message);
       onMessageDelete(message._id as string);
     } catch (error) {
       console.error("Failed to delete message", error);
-      toast("Failed to delete message", { description: "error" });
+      toast.error("Failed to delete message");
     }
   };
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between items-center">
+    <Card className="bg-white shadow-md rounded-xl transition-transform duration-300 hover:scale-[1.02]">
+      <CardHeader className="flex justify-between items-center p-5">
+        {/* Message Content */}
         <div>
-          <CardTitle>{message.content}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            {message.content}
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-500">
             {new Date(message.createdAt).toLocaleString()}
           </CardDescription>
         </div>
+
+        {/* Delete Button */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="icon" className="ml-2">
+            <Button
+              variant="destructive"
+              size="icon"
+              className="ml-2 hover:bg-red-600 transition duration-300"
+            >
               <X className="w-5 h-5" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="rounded-lg shadow-lg">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete this message.
+              <AlertDialogTitle className="text-lg font-bold text-gray-800">
+                Are you sure you want to delete this message?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-gray-600">
+                This action cannot be undone. The message will be permanently
+                deleted from the database.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm}>
-                Continue
+              <AlertDialogCancel className="hover:bg-gray-100 transition duration-300">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteConfirm}
+                className="bg-red-500 hover:bg-red-600 text-white transition duration-300"
+              >
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

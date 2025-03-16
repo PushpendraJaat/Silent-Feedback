@@ -49,14 +49,14 @@ export async function GET(request: Request) {
     const session = await getServerSession(authOptions);
     const user = session?.user;
   
-    if (!session || !user) {
-      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
+    // if (!session || !user) {
+    //   return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    // }
   
     const url = new URL(request.url);
     // If username is provided in URL, use it; otherwise, fallback to session user
     const usernameFromUrl = url.searchParams.get("username");
-    const usernameToSearch = usernameFromUrl || user.username;
+    const usernameToSearch = usernameFromUrl || user?.username;
     
     try {
         const foundUser = await UserModel.findOne({username: usernameToSearch})
