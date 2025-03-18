@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto flex justify-center items-center">
         <p className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold">Secret Message</span>. All rights reserved.
+          <span className="font-semibold">Silent Feedback</span>. All rights reserved.
         </p>
       </div>
     </footer>

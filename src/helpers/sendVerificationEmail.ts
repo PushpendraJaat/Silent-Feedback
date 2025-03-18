@@ -11,7 +11,7 @@ export async function sendVerificationEmail(
         const res = await resend.emails.send({
             from: 'do-not-reply@silent-feedback.pushpendrajaat.in',
             to: email,
-            subject: 'Silent Survey | Verification Code',
+            subject: 'Silent Feedback | Verification Code',
             react: VerificationEmail({username, otp:verifyCode}),
           });
         console.log(res)

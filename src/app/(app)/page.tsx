@@ -34,7 +34,7 @@ const Home = () => {
             Dive into the Secret World
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-600">
-            Explore Secret Message — Where your identity remains a mystery.
+            Explore Silent Feedback — Where your identity remains a mystery.
           </p>
         </section>
 

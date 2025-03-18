@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Silent Survey",
-  description: "Silent Survey",
+  title: "Silent Feedback",
+  description: "Silent Feedback",
 };
 
 export default function RootLayout({
