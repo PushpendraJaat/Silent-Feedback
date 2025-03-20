@@ -13,6 +13,7 @@ import { signUpSchema } from "@/schemas/signUpSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import useCsrfToken from "@/hooks/useCsrfToken";
 
 import {
   Form,
@@ -30,11 +31,11 @@ const Page = () => {
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const csrfToken = useCsrfToken(); // ✅ CSRF token hook
   const debounced = useDebounceCallback(setUsername, 300);
   const router = useRouter();
 
-  // Zod schema validation
+  // ✅ Zod schema validation
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -44,6 +45,7 @@ const Page = () => {
     },
   });
 
+  // ✅ Check username availability
   useEffect(() => {
     const checkUsernameUnique = async () => {
       if (username) {
@@ -51,33 +53,48 @@ const Page = () => {
         setUsernameMessage("");
         try {
           const response = await axios.get(
-            `/api/check-username-unique?username=${username}`
+            `/api/check-username-unique?username=${username}`,
+            {
+              headers: {
+                "X-CSRF-Token": csrfToken, // ✅ Include CSRF token
+              },
+            }
           );
           setUsernameMessage(response.data.message);
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;
-          setUsernameMessage(
-            axiosError.response?.data.message ?? "Error checking username."
-          );
+          if (axiosError.response?.status === 409) {
+            setUsernameMessage("Username already exists");
+          } else {
+            setUsernameMessage("Error checking username.");
+          }
         } finally {
           setIsCheckingUsername(false);
         }
       }
     };
-    checkUsernameUnique();
-  }, [username]);
 
+    checkUsernameUnique();
+  }, [username, csrfToken]);
+
+  // ✅ Form submission
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
     try {
-      const response = await axios.post<ApiResponse>("/api/signup", data);
+      const response = await axios.post<ApiResponse>("/api/signup", data, {
+        headers: {
+          "X-CSRF-Token": csrfToken, // ✅ Include CSRF token
+        },
+      });
+
       toast.success(response.data.message);
-      router.replace(`/verify/${username}`);
+      router.replace(`/verify/${data.username}`);
     } catch (error) {
-      console.error("Error in signup of user", error);
+      console.error("Error in signup:", error);
       const axiosError = error as AxiosError<ApiResponse>;
-      const errorMessage = axiosError.response?.data.message;
-      toast.error("Sign Up failed", {
+      const errorMessage =
+        axiosError.response?.data.message || "Signup failed.";
+      toast.error("Signup failed", {
         description: errorMessage,
       });
     } finally {
@@ -87,8 +104,8 @@ const Page = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
-        {/* Header */}
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
+        {/* ✅ Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Create Account
@@ -98,18 +115,16 @@ const Page = () => {
           </p>
         </div>
 
-        {/* Form */}
+        {/* ✅ Form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Username Input */}
+            {/* ✅ Username */}
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Username
-                  </FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -117,9 +132,8 @@ const Page = () => {
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
-                          debounced(e.target.value);
+                          debounced(e.target.value); // ✅ Debounced input
                         }}
-                        className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
                       />
                       {isCheckingUsername && (
                         <Loader2 className="absolute right-3 top-2 h-5 w-5 animate-spin text-gray-400" />
@@ -135,65 +149,49 @@ const Page = () => {
                   >
                     {usernameMessage}
                   </p>
-                  <FormDescription className="dark:text-gray-400">
-                    This will be your public username.
-                  </FormDescription>
+                  <FormDescription>This will be your public username.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Email Input */}
+            {/* ✅ Email */}
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Email
-                  </FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Enter your email"
-                      {...field}
-                      className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
-                    />
+                    <Input type="email" placeholder="Enter your email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Password Input */}
+            {/* ✅ Password */}
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Password
-                  </FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Create a password"
-                      {...field}
-                      className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
-                    />
+                    <Input type="password" placeholder="Create a password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Submit Button */}
+            {/* ✅ Submit Button */}
             <Button
               type="submit"
               disabled={
                 isSubmitting || usernameMessage === "Username already exists"
               }
-              className="w-full bg-blue-500 dark:bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition"
             >
               {isSubmitting ? (
                 <>
@@ -207,13 +205,10 @@ const Page = () => {
           </form>
         </Form>
 
-        {/* Sign In Link */}
-        <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
+        {/* ✅ Sign In Link */}
+        <div className="text-center mt-6">
           Already have an account?{" "}
-          <Link
-            href="/signin"
-            className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 transition"
-          >
+          <Link href="/signin" className="text-blue-500 hover:text-blue-700">
             Sign In
           </Link>
         </div>

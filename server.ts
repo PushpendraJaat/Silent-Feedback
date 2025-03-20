@@ -2,7 +2,6 @@ import express from "express";
 import next from "next";
 import helmet from "helmet";
 import { rateLimiter } from "@/middlewares/rateLimiter";
-import { csrfProtection } from "@/middlewares/csrf";
 import { sanitizeInput } from "@/middlewares/inputSanitizer";
 
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -13,16 +12,16 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // Secure HTTP headers using Helmet
+  // ✅ Secure HTTP headers using Helmet
   server.use(helmet());
 
-  // Apply rate limiting
+  // ✅ Apply rate limiting
   server.use(rateLimiter);
 
-  // CSRF Protection
-  server.use(csrfProtection);
+  // ✅ Parse JSON body (for handling POST requests)
+  server.use(express.json());
 
-  // Input Sanitization
+  // ✅ Input sanitization middleware
   server.use((req, res, next) => {
     if (req.body && typeof req.body === "object") {
       for (const key in req.body) {
@@ -34,12 +33,11 @@ app.prepare().then(() => {
     next();
   });
 
-  // API Routing
-  server.all("*", (req, res) => {
-    return handle(req, res);
-  });
+  // ✅ Handle all Next.js routes
+  server.all("*", (req, res) => handle(req, res));
 
+  // ✅ Start server
   server.listen(port, () => {
-    
+    console.log(`> Ready on http://localhost:${port}`);
   });
 });

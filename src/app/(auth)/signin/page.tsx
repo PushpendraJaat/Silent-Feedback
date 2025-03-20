@@ -20,9 +20,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { signIn, SignInResponse } from "next-auth/react";
+import useCsrfToken from "@/hooks/useCsrfToken";
 
 const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const csrfToken = useCsrfToken(); // ✅ Use the hook
   const router = useRouter();
 
   // Zod schema validation
@@ -41,15 +43,16 @@ const Page = () => {
         redirect: false,
         identifier: data.identifier,
         password: data.password,
+        headers: {
+          "X-CSRF-Token": csrfToken, // ✅ Include CSRF token
+        },
       });
 
       if (result?.error) {
         toast.error("Login failed", {
           description: "Invalid credentials!",
         });
-      }
-
-      if (result?.url) {
+      } else if (result?.url) {
         router.replace("/dashboard");
       }
     } catch (error) {
@@ -64,34 +67,31 @@ const Page = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
-        {/* Header Section */}
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Welcome Back!
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Sign in to continue your adventure.
+            Sign in to continue your journey.
           </p>
         </div>
 
-        {/* Form Section */}
+        {/* Form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Identifier Input */}
+            {/* Identifier Field */}
             <FormField
               control={form.control}
               name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Email or Username
-                  </FormLabel>
+                  <FormLabel>Email or Username</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter your email or username"
                       {...field}
-                      className="border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition text-gray-900 dark:text-gray-100"
                     />
                   </FormControl>
                   <FormMessage />
@@ -99,22 +99,15 @@ const Page = () => {
               )}
             />
 
-            {/* Password Input */}
+            {/* Password Field */}
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Password
-                  </FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                      className="border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition text-gray-900 dark:text-gray-100"
-                    />
+                    <Input type="password" placeholder="Enter your password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,11 +115,7 @@ const Page = () => {
             />
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-300"
-            >
+            <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -140,12 +129,9 @@ const Page = () => {
         </Form>
 
         {/* Sign Up Link */}
-        <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
+        <div className="text-center mt-6">
           Don&apos;t have an account?{" "}
-          <Link
-            href="/signup"
-            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition"
-          >
+          <Link href="/signup" className="text-blue-500 hover:text-blue-700">
             Sign Up
           </Link>
         </div>
