@@ -86,12 +86,16 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-      <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800">
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-500 mt-2">Sign up to join the community.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Create Account
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
+            Sign up to join the community.
+          </p>
         </div>
 
         {/* Form */}
@@ -103,7 +107,9 @@ const Page = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Username</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Username
+                  </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
@@ -113,7 +119,7 @@ const Page = () => {
                           field.onChange(e);
                           debounced(e.target.value);
                         }}
-                        className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
+                        className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
                       />
                       {isCheckingUsername && (
                         <Loader2 className="absolute right-3 top-2 h-5 w-5 animate-spin text-gray-400" />
@@ -129,7 +135,7 @@ const Page = () => {
                   >
                     {usernameMessage}
                   </p>
-                  <FormDescription>
+                  <FormDescription className="dark:text-gray-400">
                     This will be your public username.
                   </FormDescription>
                   <FormMessage />
@@ -143,13 +149,15 @@ const Page = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Email</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
                       placeholder="Enter your email"
                       {...field}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
+                      className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
                     />
                   </FormControl>
                   <FormMessage />
@@ -163,13 +171,15 @@ const Page = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Password</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
                       placeholder="Create a password"
                       {...field}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
+                      className="border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
                     />
                   </FormControl>
                   <FormMessage />
@@ -183,7 +193,7 @@ const Page = () => {
               disabled={
                 isSubmitting || usernameMessage === "Username already exists"
               }
-              className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              className="w-full bg-blue-500 dark:bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition duration-300"
             >
               {isSubmitting ? (
                 <>
@@ -198,11 +208,11 @@ const Page = () => {
         </Form>
 
         {/* Sign In Link */}
-        <div className="text-center mt-6 text-gray-600">
+        <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <Link
             href="/signin"
-            className="text-blue-500 hover:text-blue-700 transition"
+            className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 transition"
           >
             Sign In
           </Link>

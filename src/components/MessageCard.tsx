@@ -44,14 +44,14 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
   };
 
   return (
-    <Card className="bg-white shadow-md rounded-xl transition-transform duration-300 hover:scale-[1.02]">
-      <CardHeader className="flex justify-between items-center p-5">
+    <Card className="bg-white dark:bg-gray-900 shadow-lg rounded-xl transition-transform duration-300 hover:scale-[1.02]">
+      <CardHeader className="flex justify-between items-center p-6">
         {/* Message Content */}
         <div>
-          <CardTitle className="text-lg font-semibold text-gray-900">
+          <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white leading-snug">
             {message.content}
           </CardTitle>
-          <CardDescription className="text-sm text-gray-500">
+          <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
             {new Date(message.createdAt).toLocaleString()}
           </CardDescription>
         </div>
@@ -60,30 +60,30 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
-              variant="destructive"
+              variant="ghost"
               size="icon"
-              className="ml-2 hover:bg-red-600 transition duration-300"
+              className="hover:bg-red-100 dark:hover:bg-red-900 transition duration-300"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-gray-800 dark:text-gray-300" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-lg shadow-lg">
+          <AlertDialogContent className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border dark:border-gray-700">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-lg font-bold text-gray-800">
-                Are you sure you want to delete this message?
+              <AlertDialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Confirm Deletion
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm text-gray-600">
-                This action cannot be undone. The message will be permanently
-                deleted from the database.
+              <AlertDialogDescription className="text-sm text-gray-500 dark:text-gray-400">
+                Are you sure you want to delete this message? This action
+                cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="hover:bg-gray-100 transition duration-300">
+              <AlertDialogCancel className="hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteConfirm}
-                className="bg-red-500 hover:bg-red-600 text-white transition duration-300"
+                className="bg-red-500 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800 text-white transition duration-300"
               >
                 Delete
               </AlertDialogAction>

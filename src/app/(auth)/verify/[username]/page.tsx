@@ -96,12 +96,14 @@ const VerifyAccount = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-2xl transform transition-all hover:scale-[1.02]">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-lg rounded-2xl transform transition-all hover:scale-[1.02]">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Verify Account</h1>
-          <p className="text-gray-500 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Verify Account
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
             Enter the verification code to activate your account.
           </p>
         </div>
@@ -116,13 +118,15 @@ const VerifyAccount = () => {
               defaultValue=""
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Verification Code</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Verification Code
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       placeholder="Enter your code"
                       {...field}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition-all rounded-lg"
+                      className="border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 dark:focus:ring-blue-600 transition-all rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     />
                   </FormControl>
                   <FormMessage />
@@ -134,7 +138,7 @@ const VerifyAccount = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-300"
             >
               {isSubmitting ? (
                 <>
@@ -149,17 +153,19 @@ const VerifyAccount = () => {
         </Form>
 
         {/* Resend Code Button */}
-        <div className="text-center mt-6 text-gray-600">
+        <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
           {cooldown > 0 ? (
-            <p className="text-gray-400">
+            <p className="text-gray-400 dark:text-gray-500">
               Resend code available in{" "}
-              <span className="font-semibold text-blue-500">{cooldown}s</span>
+              <span className="font-semibold text-blue-500 dark:text-blue-400">
+                {cooldown}s
+              </span>
             </p>
           ) : (
             <button
               onClick={handleResendCode}
               disabled={cooldown > 0}
-              className="text-blue-500 hover:text-blue-700 transition font-semibold"
+              className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 transition font-semibold"
             >
               Resend Code
             </button>

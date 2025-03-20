@@ -63,12 +63,16 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200">
-      <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl transition-transform hover:scale-[1.02]">
         {/* Header Section */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back!</h1>
-          <p className="text-gray-500 mt-2">Sign in to continue your adventure.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Welcome Back!
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
+            Sign in to continue your adventure.
+          </p>
         </div>
 
         {/* Form Section */}
@@ -80,12 +84,14 @@ const Page = () => {
               name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Email or Username</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Email or Username
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter your email or username"
                       {...field}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
+                      className="border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition text-gray-900 dark:text-gray-100"
                     />
                   </FormControl>
                   <FormMessage />
@@ -99,13 +105,15 @@ const Page = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Password</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-300">
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
                       placeholder="Enter your password"
                       {...field}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition"
+                      className="border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-400 transition text-gray-900 dark:text-gray-100"
                     />
                   </FormControl>
                   <FormMessage />
@@ -117,7 +125,7 @@ const Page = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-300"
             >
               {isSubmitting ? (
                 <>
@@ -132,9 +140,12 @@ const Page = () => {
         </Form>
 
         {/* Sign Up Link */}
-        <div className="text-center mt-6 text-gray-600">
+        <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-blue-500 hover:text-blue-700 transition">
+          <Link
+            href="/signup"
+            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition"
+          >
             Sign Up
           </Link>
         </div>
