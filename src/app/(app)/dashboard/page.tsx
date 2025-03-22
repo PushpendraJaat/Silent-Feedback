@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
 import { useRouter } from "next/navigation";
+import useCsrfToken from "@/hooks/useCsrfToken";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState<boolean>(false);
+  const csrfToken = useCsrfToken();
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema)
@@ -69,6 +71,8 @@ const Dashboard = () => {
     try {
       const response = await axios.post<ApiResponse>('/api/accept-messages', {
         acceptMessages: !acceptMessages
+      }, {
+        headers: { "X-CSRF-Token": csrfToken }
       });
       setValue('acceptMessages', !acceptMessages);
       toast.success(response.data.message || "Updated successfully");

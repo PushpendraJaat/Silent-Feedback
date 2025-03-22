@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User";
+import { validateCsrfToken } from "@/lib/validateCsrf";
 
 export async function POST(request: Request) {
     await dbConnect();
@@ -16,6 +17,8 @@ export async function POST(request: Request) {
     const { acceptMessages } = await request.json();
 
     try {
+        await validateCsrfToken(request)
+        
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
             {

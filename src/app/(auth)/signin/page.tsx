@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signInSchema } from "@/schemas/signInSchema";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { CustomPasswordField } from "@/components/ui/CustomPasswordField";
 import {
   Form,
   FormControl,
@@ -21,15 +21,17 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { signIn, SignInResponse } from "next-auth/react";
 import useCsrfToken from "@/hooks/useCsrfToken";
+import { Loader2 } from "lucide-react";
 
-const Page = () => {
+export default function SignInPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const csrfToken = useCsrfToken(); // ✅ Use the hook
   const router = useRouter();
 
-  // Zod schema validation
+  // ✅ Zod schema validation
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
+    mode: "onSubmit",
     defaultValues: {
       identifier: "",
       password: "",
@@ -44,22 +46,18 @@ const Page = () => {
         identifier: data.identifier,
         password: data.password,
         headers: {
-          "X-CSRF-Token": csrfToken, // ✅ Include CSRF token
+          "X-CSRF-Token": csrfToken,
         },
       });
 
       if (result?.error) {
-        toast.error("Login failed", {
-          description: "Invalid credentials!",
-        });
+        toast.error("Login failed", { description: "Invalid credentials!" });
       } else if (result?.url) {
         router.replace("/dashboard");
       }
     } catch (error) {
-      console.error("Error in signing in", error);
-      toast.error("Sign In failed!", {
-        description: String(error),
-      });
+      console.error("Error in signing in:", error);
+      toast.error("Sign In failed!", { description: String(error) });
     } finally {
       setIsSubmitting(false);
     }
@@ -70,12 +68,8 @@ const Page = () => {
       <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Welcome Back!
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Sign in to continue your journey.
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome Back!</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">Sign in to continue your journey.</p>
         </div>
 
         {/* Form */}
@@ -89,30 +83,21 @@ const Page = () => {
                 <FormItem>
                   <FormLabel>Email or Username</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your email or username"
-                      {...field}
-                    />
+                    <Input placeholder="Enter your email or username" {...field} className="dark:bg-gray-700 dark:text-gray-100" />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500 dark:text-red-400" />
                 </FormItem>
               )}
             />
 
-            {/* Password Field */}
-            <FormField
-              control={form.control}
+            {/* Use the custom password field */}
+            <CustomPasswordField
               name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Enter your password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Password"
+              control={form.control}
+              placeholder="Enter your password"
             />
+
 
             {/* Submit Button */}
             <Button type="submit" disabled={isSubmitting} className="w-full">
@@ -138,6 +123,4 @@ const Page = () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}
