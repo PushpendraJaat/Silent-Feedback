@@ -70,10 +70,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark overflow-x-hidden scroll-smooth" suppressHydrationWarning >
       <AuthProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
         >
           <ThemeProvider
             attribute="class"

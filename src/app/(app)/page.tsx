@@ -29,7 +29,7 @@ const Home = () => {
     <main className="flex-grow flex flex-col items-center justify-center px-6 md:px-16 py-16 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
       {/* Header Section */}
       <section className="text-center mb-12">
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+        <h1 className="text-4xl md:text-6xl mt-6 md:mt-12 font-extrabold tracking-tight text-gray-900 dark:text-white">
           Dive into the Secret World
         </h1>
         <p className="mt-4 text-lg md:text-xl text-gray-600 dark:text-gray-300">
