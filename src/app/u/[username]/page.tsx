@@ -10,13 +10,14 @@ import { ChevronsUpDown, Loader2 } from "lucide-react";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import TextareaAutosize from "react-textarea-autosize";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { messageSchema } from "@/schemas/messageSchema";
 import { Message } from "@/models/User";
+import { motion } from "framer-motion";
 
 interface FormData {
   content: string;
@@ -36,10 +37,10 @@ const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [acceptingMessages, setAcceptingMessages] = useState<boolean | null>(null);
 
-  const fetchSuggestedMessages = async () => {
+  const fetchSuggestedMessages = useCallback(async () => {
     try {
       setIsLoadingSuggestions(true);
-      const response = await axios.post<ApiResponse>("/api/suggest-messages");
+      const response = await axios.get<ApiResponse>("/api/suggest-messages");
       if (response.data?.success && Array.isArray(response.data.messages)) {
         setSuggestedMessages(response.data.messages.map((message: Message) => message.content));
       }
@@ -49,7 +50,13 @@ const Page = () => {
     } finally {
       setIsLoadingSuggestions(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchSuggestedMessages();
+    }
+  }, [isOpen, fetchSuggestedMessages]);
 
   useEffect(() => {
     const fetchUserStatus = async () => {
@@ -57,17 +64,12 @@ const Page = () => {
         const response = await axios.get<ApiResponse>("/api/accept-messages", {
           params: { username },
         });
-        if (response.data?.success) {
-          setAcceptingMessages(response.data.isAcceptingMessages || false);
-        } else {
-          setAcceptingMessages(false);
-        }
+        setAcceptingMessages(response.data?.isAcceptingMessages ?? false);
       } catch (error) {
         console.error("Error fetching user status", error);
         setAcceptingMessages(false);
       }
     };
-
     fetchUserStatus();
   }, [username]);
 
@@ -103,22 +105,28 @@ const Page = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-lg">
-      {/* Header */}
+    <motion.div 
+      className="container mx-auto my-32 p-6 max-w-lg bg-gray-100 dark:bg-gray-900 rounded-xl shadow-md transition-all"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.5 }}
+    >
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
-        Send a Message to {username}
+        Send an Anonymous Message to {username}
       </h1>
+      <p className="text-center text-gray-600 dark:text-gray-400 mb-4">
+        Your identity will remain completely anonymous.
+      </p>
 
-      {/* Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mb-6 bg-white dark:bg-gray-800 shadow-md rounded-lg p-5"
+        className="mb-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 transition-all hover:shadow-xl"
       >
         <TextareaAutosize
           minRows={3}
           placeholder="Type your message..."
           {...register("content")}
-          className="border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-md p-3 w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 resize-none transition-all"
+          className="border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-lg p-3 w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 resize-none transition-all"
         />
         {errors.content && (
           <p className="text-red-500 text-sm mb-2">
@@ -128,51 +136,30 @@ const Page = () => {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-md transition-all"
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 hover:opacity-90 text-white font-bold py-2 px-4 rounded-lg transition-all flex justify-center items-center"
         >
-          {isSubmitting ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            "Send"
-          )}
+          {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send Message"}
         </Button>
       </form>
 
-      {/* Collapsible for Suggestions */}
-      <Collapsible
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        className="w-full"
-      >
-        <div className="flex items-center justify-between space-x-4 p-3 border border-gray-300 dark:border-gray-700 rounded-md">
-          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
+        <div className="flex items-center justify-between space-x-4 px-4">
+          <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
             Click to view suggested messages.
           </h4>
           <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={fetchSuggestedMessages}
-              className="dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              {isLoadingSuggestions ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <ChevronsUpDown className="h-4 w-4" />
-                  <span className="sr-only">Toggle</span>
-                </>
-              )}
+            <Button variant="ghost" size="sm">
+              {isLoadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronsUpDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
         </div>
-        <CollapsibleContent>
-          <ul className="space-y-2 mt-2">
+        <CollapsibleContent className="space-y-2">
+          <ul className="space-y-2">
             {suggestedMessages.map((message, index) => (
-              <li
-                key={index}
-                onClick={() => handleSuggestedClick(message)}
-                className="cursor-pointer bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+              <li 
+                key={index} 
+                onClick={() => handleSuggestedClick(message)} 
+                className="cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 p-3 rounded border border-gray-300 dark:border-gray-600 transition-colors"
               >
                 {message}
               </li>
@@ -180,7 +167,7 @@ const Page = () => {
           </ul>
         </CollapsibleContent>
       </Collapsible>
-    </div>
+    </motion.div>
   );
 };
 

@@ -39,7 +39,7 @@ const Home = () => {
 
       {/* Carousel Section */}
       <Carousel
-        className="w-full max-w-lg"
+        className="w-3/4 md:w-full max-w-lg"
         plugins={[AutoPlay({ delay: 2500 })]}
       >
         <CarouselContent>

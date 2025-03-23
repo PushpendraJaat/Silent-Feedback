@@ -44,7 +44,7 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-900 shadow-lg rounded-xl transition-transform duration-300 hover:scale-[1.02]">
+    <Card className="bg-white dark:bg-gray-800 shadow-lg rounded-xl transition-transform duration-300 hover:scale-[1.02]">
       <CardHeader className="flex justify-between items-center p-6">
         {/* Message Content */}
         <div>
@@ -62,9 +62,9 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-red-100 dark:hover:bg-red-900 transition duration-300"
+              className="hover:bg-red-400 dark:hover:bg-red-900 transition duration-300"
             >
-              <X className="w-5 h-5 text-gray-800 dark:text-gray-300" />
+              <X className="w-5 h-5 text-red-800 dark:text-red-300" />
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border dark:border-gray-700">
