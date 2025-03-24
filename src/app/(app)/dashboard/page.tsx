@@ -95,7 +95,7 @@ const Dashboard = () => {
   const profileUrl = `${window.location.protocol}//${window.location.host}/u/${username}`;
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-4xl mt-24 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-xl">
+    <div className="container mx-auto px-4 py-10 max-w-4xl mt-24 mb-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-xl">
       <h1 className="text-4xl font-extrabold text-center text-gray-800 dark:text-gray-200 mb-6">User Dashboard</h1>
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         <div className="flex items-center justify-between mb-4">
