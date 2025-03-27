@@ -1,7 +1,3 @@
-Below is the further refined README, polished to reflect a senior developer’s approach, with additional security details, environment configurations, and engaging formatting.
-
----
-
 # Silent Feedback 📝
 
 [Live Demo](https://silent-feedback.pushpendrajaat.in/)
